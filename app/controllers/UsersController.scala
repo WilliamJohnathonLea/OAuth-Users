@@ -7,7 +7,7 @@ import models.User
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, BaseController, ControllerComponents}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 
 /**
@@ -20,22 +20,14 @@ class UsersController @Inject()(
 )(implicit ec: ExecutionContext) extends BaseController {
 
   def create: Action[JsValue] = Action.async(parse.json) { request =>
-    users.insert(request.body.as[User])
-      .map { created =>
-        if(created) Created else InternalServerError
-      }
+    request.body.asOpt[User] match {
+      case Some(user) => users.insert(user).map(if(_) Created else InternalServerError)
+      case None => Future.successful(BadRequest)
+    }
   }
 
-  def read = Action {
-    users.find("")
-    Ok
-  }
-
-  def update = Action {
-    Ok
-  }
-
-  def delete = Action {
+  def read(id: String) = Action {
+    users.find(id)
     Ok
   }
 

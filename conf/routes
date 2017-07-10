@@ -1,5 +1,3 @@
 
-GET         /user       controllers.UsersController.read
-POST        /user       controllers.UsersController.create
-PUT         /user       controllers.UsersController.update
-DELETE      /user       controllers.UsersController.delete
+GET         /users/:id       controllers.UsersController.read
+POST        /users           controllers.UsersController.create
